@@ -1,0 +1,170 @@
+//PURE IMPLEMENTATION OF SEGMENT TREE AND BINARY SEARCH IN JAVA FEEL FREE TO ASK QUESTIONS
+
+
+
+
+/* package whatever; // don't place package name! */
+
+import java.util.*;
+import java.lang.*;
+import java.io.*;
+
+/* Name of the class has to be "Main" only if the class is public. */
+class Ideone
+{
+	static class Segment
+	{
+		class node
+		{
+			int data,si,ei;
+			node left,right;
+		}
+		private node root;
+		Segment(int a[])
+		{
+			root=construct(a,0,a.length-1);
+		}
+		public node construct(int a[],int l,int hi)
+		{
+			node nn=new node();
+			nn.si=l;
+			nn.ei=hi;
+			if(l==hi)
+			{
+				nn.data=a[l];
+				return nn;
+			}
+			int mid=l+(hi-l)/2;
+			nn.left=construct(a,l,mid);
+			nn.right=construct(a,mid+1,hi);
+			nn.data=Math.max(nn.left.data,nn.right.data);
+			return nn;
+		}
+		public int query(int l ,int h)
+		{
+			return query(root,l,h);
+		}
+		private int query(node r,int l ,int h)
+		{
+			if(r.si>=l&&r.ei<=h)
+			{
+				return r.data;
+			}
+			else if(r.si>h||r.ei<l)
+			{
+				return Integer.MIN_VALUE;
+			}
+			else
+			{
+				int left=query(r.left,l,h);
+				int right=query(r.right,l,h);
+				return Math.max(left,right);
+			}
+		}
+		public void display()
+		{
+			display(root);
+		}
+		private void display(node r)
+		{
+			if(r==null)
+			return;
+			String s="";
+			if(r.left!=null)
+			s+=r.left.data+"->";
+			else
+			s+=".->";
+			s+=r.data;
+			if(r.right!=null)
+			s+="<-"+r.right.data;
+			else
+			s+="<-.";
+			System.out.println(s);
+			display(r.left);
+			display(r.right);
+		}
+		public void update(int ind,int data)
+		{
+			update(root,ind,data);
+		}
+		private void update(node roo,int ind,int item)
+		{
+			if(roo.si==ind&&roo.ei==ind)
+			{
+				roo.data=item;
+			}
+			else if(roo.si<=ind&&roo.ei>=ind)
+			{
+				update(roo.left,ind,item);
+				update(roo.right,ind,item);
+				roo.data=Math.max(roo.left.data,roo.right.data);
+			}
+			else
+			return ;
+		}
+	}
+	static public boolean check(int a[],int size,int tot,int b[])
+	{
+		int sum=0;
+		int n=a.length;
+		for(int i=0;i<size;i++)
+		{
+			sum+=a[i];
+		}
+		int val=sum*size+s.query(0,size-1);
+		System.out.println(val+" size "+size);
+		if(val<=tot)
+		return true;
+		for(int i=size;i<n;i++)
+		{
+			sum+=a[i];
+			sum-=a[i-size];
+			 val=sum*size+s.query(i-size+1,i);
+			if(val<=tot)
+			return true;
+		}
+		return false;
+		
+	}
+	static public int dowork(int a[],int tot,int []b)
+	{
+		int l=0,h=a.length;
+		int maxlength=0;
+		while(l<=h)
+		{
+			int mid=l+(h-l)/2;
+			if(check(a,mid,tot,b))
+			{
+				maxlength=mid;
+				l=mid+1;
+			}
+			else
+			{
+				h=mid-1;
+			}
+			
+		}
+		return maxlength;
+		
+	}
+	
+	static Segment s;
+	public static void main (String[] args) throws java.lang.Exception
+	{
+		// your code goes here
+		Scanner scn=new Scanner(System.in);
+		int n=scn.nextInt();
+		int a[]=new int[n];
+		int b[]=new int[n];
+		for(int i=0;i<n;i++)
+		a[i]=scn.nextInt();
+		for(int i=0;i<n;i++)
+		b[i]=scn.nextInt();
+		int k=scn.nextInt();
+		s=new Segment(b);
+		//s.display();
+		System.out.println(dowork(a,k,b));
+		
+		
+	}
+}
